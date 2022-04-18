@@ -1,5 +1,6 @@
 package info.u_team.music_player.init;
 
+import info.u_team.music_player.config.ClientConfig;
 import info.u_team.music_player.dependency.DependencyManager;
 
 public class MusicPlayerClientConstruct {
@@ -7,7 +8,7 @@ public class MusicPlayerClientConstruct {
 	public static void construct() {
 		System.setProperty("http.agent", "Chrome");
 		
-		// ModLoadingContext.get().registerConfig(Type.CLIENT, ClientConfig.CONFIG);
+		ClientConfig.load();
 		
 		DependencyManager.load();
 		
