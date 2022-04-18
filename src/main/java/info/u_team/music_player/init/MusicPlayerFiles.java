@@ -18,7 +18,7 @@ public class MusicPlayerFiles {
 	private static Path DIRECTORY;
 	
 	public static void load() {
-		if (ClientConfig.getInstance().internalPlaylists.get()) {
+		if (ClientConfig.getInstance().internalPlaylists) {
 			DIRECTORY = Paths.get(Minecraft.getInstance().gameDirectory.toString(), "config/musicplayer");
 		} else {
 			DIRECTORY = Paths.get(AppDirsFactory.getInstance().getUserConfigDir("musicplayer", null, "mc-u-team", true));
