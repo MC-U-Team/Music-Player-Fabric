@@ -2,6 +2,7 @@ package info.u_team.music_player.init;
 
 import info.u_team.music_player.config.ClientConfig;
 import info.u_team.music_player.dependency.DependencyManager;
+import info.u_team.music_player.musicplayer.MusicPlayerManager;
 
 public class MusicPlayerClientConstruct {
 	
@@ -14,8 +15,9 @@ public class MusicPlayerClientConstruct {
 		
 		MusicPlayerFiles.load();
 		
-		// BusRegister.registerMod(MusicPlayerManager::registerMod);
-		// BusRegister.registerMod(MusicPlayerKeys::registerMod);
+		MusicPlayerManager.setup();
+		MusicPlayerKeys.register();
+		
 		//
 		// BusRegister.registerForge(MusicPlayerEventHandler::registerForge);
 	}
