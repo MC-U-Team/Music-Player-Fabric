@@ -47,6 +47,14 @@ java {
 
 loom {
 	accessWidenerPath = file("src/main/resources/musicplayer.accesswidener")
+	
+	runs {
+		client {
+			client()
+			
+			property("musicplayer.dev", "${project.rootDir}")
+		}
+	}
 }
 
 tasks.withType(Jar) { task ->
