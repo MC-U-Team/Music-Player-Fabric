@@ -1,20 +1,29 @@
 package info.u_team.music_player.init;
 
+import java.util.List;
+
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.InputConstants.Key;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import info.u_team.music_player.gui.GuiMusicPlayer;
+import info.u_team.music_player.gui.controls.GuiControls;
 import info.u_team.music_player.lavaplayer.api.queue.ITrackManager;
 import info.u_team.music_player.musicplayer.MusicPlayerManager;
 import info.u_team.music_player.musicplayer.MusicPlayerUtils;
 import info.u_team.music_player.musicplayer.SettingsManager;
 import info.u_team.music_player.musicplayer.settings.IngameOverlayPosition;
 import info.u_team.music_player.render.RenderOverlayMusicDisplay;
+import info.u_team.u_team_core.gui.elements.ScrollingText;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
+import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.screens.PauseScreen;
+import net.minecraft.client.gui.screens.Screen;
 
 public class MusicPlayerEventHandler {
 	
@@ -111,16 +120,81 @@ public class MusicPlayerEventHandler {
 		}
 	}
 	
+	// Used to add buttons and gui controls to main ingame gui
+	
+	private static ScrollingText titleRender, authorRender;
+	
+	private static void onPreInitScreen(Minecraft client, Screen screen, int scaledWidth, int scaledHeight) {
+		if (screen instanceof PauseScreen) {
+			if (SETTINGS_MANAGER.getSettings().isShowIngameMenueOverlay()) {
+				screen.children().stream() //
+						.filter(element -> element instanceof GuiControls) //
+						.map(element -> ((GuiControls) element)).findAny() //
+						.ifPresent(controls -> {
+							titleRender = controls.getTitleRender();
+							authorRender = controls.getAuthorRender();
+						});
+			}
+		}
+	}
+	
+	private static void onPostInitScreen(Minecraft client, Screen screen, int scaledWidth, int scaledHeight) {
+		if (screen instanceof PauseScreen) {
+			if (SETTINGS_MANAGER.getSettings().isShowIngameMenueOverlay()) {
+				final GuiControls controls = new GuiControls(screen, 3, screen.width);
+				if (titleRender != null) {
+					controls.copyTitleRendererState(titleRender);
+					titleRender = null;
+				}
+				if (authorRender != null) {
+					controls.copyAuthorRendererState(authorRender);
+					authorRender = null;
+				}
+				@SuppressWarnings("unchecked")
+				final List<GuiEventListener> list = (List<GuiEventListener>) screen.children();
+				list.add(controls);
+			}
+		}
+	}
+	
+	private static void onDrawScreenPost(Screen screen, PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
+		if (SETTINGS_MANAGER.getSettings().isShowIngameMenueOverlay()) {
+			screen.children().stream() //
+					.filter(element -> element instanceof GuiControls) //
+					.map(element -> ((GuiControls) element)).findAny() //
+					.ifPresent(controls -> controls.render(poseStack, mouseX, mouseY, partialTick));
+		}
+	}
+	
+	private static void onMouseReleasePre(Screen screen, double mouseX, double mouseY, int button) {
+		if (SETTINGS_MANAGER.getSettings().isShowIngameMenueOverlay()) {
+			screen.children().stream() //
+					.filter(element -> element instanceof GuiControls) //
+					.map(element -> ((GuiControls) element)).findAny() //
+					.ifPresent(controls -> controls.mouseReleased(mouseX, mouseY, button));
+		}
+	}
+	
+	private static void onClientTick(Screen screen) {
+		if (SETTINGS_MANAGER.getSettings().isShowIngameMenueOverlay()) {
+			screen.children().stream() //
+					.filter(element -> element instanceof GuiControls) //
+					.map(element -> ((GuiControls) element)).findAny() //
+					.ifPresent(GuiControls::tick);
+		}
+	}
+	
 	public static void register() {
-		// ScreenEvents.BEFORE_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
-		// System.out.println("XOXOX");
-		// if (SETTINGS_MANAGER.getSettings().isKeyWorkInGui()) {
-		// ScreenKeyboardEvents.afterKeyPress(screen).register((unused, key, scancode, modifiers) -> {
-		// System.out.println("HELLO ROFL");
-		// handleKeyboard(true, key, scancode);
-		// });
-		// }
-		// });
+		ScreenEvents.BEFORE_INIT.register(MusicPlayerEventHandler::onPreInitScreen);
+		ScreenEvents.AFTER_INIT.register(MusicPlayerEventHandler::onPostInitScreen);
+		
+		ScreenEvents.AFTER_INIT.register((client, screen, scaledWidth, scaledHeight) -> {
+			if (screen instanceof PauseScreen) {
+				ScreenEvents.afterRender(screen).register(MusicPlayerEventHandler::onDrawScreenPost);
+				ScreenMouseEvents.beforeMouseRelease(screen).register(MusicPlayerEventHandler::onMouseReleasePre);
+				ScreenEvents.afterTick(screen).register(MusicPlayerEventHandler::onClientTick);
+			}
+		});
 	}
 	
 }
