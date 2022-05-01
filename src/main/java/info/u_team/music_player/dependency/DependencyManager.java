@@ -17,6 +17,9 @@ import org.apache.logging.log4j.MarkerManager;
 
 import info.u_team.music_player.MusicPlayerMod;
 import info.u_team.music_player.dependency.classloader.DependencyClassLoader;
+import info.u_team.music_player.dependency.classloader.JarLookupURLStreamHandlerProvider;
+import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.ModContainer;
 
 public class DependencyManager {
 	
@@ -31,14 +34,12 @@ public class DependencyManager {
 	public static void load() {
 		LOGGER.info(MARKER_LOAD, "Load dependencies");
 		
-		// setupURLStreamHack();
-		
 		final String devPath = System.getProperty("musicplayer.dev");
 		if (devPath != null) {
 			findJarFilesInDev(Paths.get(devPath, "musicplayer-lavaplayer/build/libs"), path -> addToMusicPlayerDependencies(pathToUrl().apply(path)));
 			findJarFilesInDev(Paths.get(devPath, "musicplayer-lavaplayer/build/dependencies"), path -> addToMusicPlayerDependencies(pathToUrl().apply(path)));
 		} else {
-			// findJarFilesInJar("dependencies", path -> addToMusicPlayerDependencies(createInternalURL(path)));
+			findJarFilesInJar("dependencies", path -> addToMusicPlayerDependencies(createInternalURL(path)));
 		}
 		
 		LOGGER.info(MARKER_LOAD, "Finished loading dependencies");
@@ -55,24 +56,25 @@ public class DependencyManager {
 	}
 	
 	private static void findJarFilesInDev(Path path, Consumer<Path> consumer) {
-		try (Stream<Path> stream = Files.walk(path)) {
+		try (final Stream<Path> stream = Files.walk(path)) {
 			stream.filter(file -> file.toString().endsWith(FILE_ENDING)).forEach(consumer);
 		} catch (final IOException ex) {
 			LOGGER.error(MARKER_LOAD, "When searching for jar files in dev an exception occured.", ex);
 		}
 	}
 	
-	// private static void findJarFilesInJar(String folder, Consumer<Path> consumer) {
-	// final IModFile modfile = ModList.get().getModFileById(MusicPlayerMod.MODID).getFile();
-	// try (Stream<Path> stream = Files.walk(modfile.findResource("/" + folder))) {
-	// stream.filter(file -> file.toString().endsWith(FILE_ENDING)).forEach(consumer);
-	// } catch (final IOException ex) {
-	// LOGGER.error(MARKER_LOAD, "When searching for jar files in jar an exception occured.", ex);
-	// }
-	// }
+	private static void findJarFilesInJar(String folder, Consumer<Path> consumer) {
+		final ModContainer container = FabricLoader.getInstance().getModContainer(MusicPlayerMod.MODID).orElseThrow(IllegalStateException::new);
+		
+		try (final Stream<Path> stream = Files.walk(container.findPath(folder).orElseThrow(IllegalStateException::new))) {
+			stream.filter(file -> file.toString().endsWith(FILE_ENDING)).forEach(consumer);
+		} catch (final IOException | IllegalStateException ex) {
+			LOGGER.error(MARKER_LOAD, "When searching for jar files in jar an exception occured.", ex);
+		}
+	}
 	
 	private static URL createInternalURL(Path path) {
-		final String url = "jarlookup://" + MusicPlayerMod.MODID + "/" + path;
+		final String url = JarLookupURLStreamHandlerProvider.PROTOCOL + "://" + MusicPlayerMod.MODID + "/" + path;
 		LOGGER.debug(MARKER_LOAD, "Create mod jar url ({}) from path ({}).", url, path);
 		try {
 			return new URL(url);
@@ -88,41 +90,4 @@ public class DependencyManager {
 		MUSICPLAYER_CLASSLOADER.addURL(url);
 		LOGGER.debug(MARKER_ADD, "Added new jar file ({}) to the musicplayer dependency classloader.", url);
 	}
-	
-	// TODO replace this with a less hacky solution
-	// private static void setupURLStreamHack() {
-	// LOGGER.info(MARKER_ADD, "Trying to initialize url stream handler for musicplayer url protocol.");
-	//
-	// try {
-	// final var field = ModularURLHandler.class.getDeclaredField("handlers");
-	// final Map<String, IURLProvider> handlers = UnsafeHacks.getField(field, ModularURLHandler.INSTANCE);
-	//
-	// handlers.put("jarlookup", new IURLProvider() {
-	//
-	// @Override
-	// public String protocol() {
-	// return "jarlookup";
-	// }
-	//
-	// @Override
-	// public Function<URL, InputStream> inputStreamFunction() {
-	// return url -> {
-	// try {
-	// final var info = FMLLoader.getLoadingModList().getModFileById(url.getHost());
-	// if (info == null) {
-	// throw new IOException("Modid " + url.getHost() + " does not exists");
-	// }
-	// final var path = info.getFile().findResource(url.getPath().substring(1));
-	// return Files.newInputStream(path);
-	// } catch (IOException ex) {
-	// LOGGER.error("Could not find resource {}", url);
-	// throw new UncheckedIOException(ex);
-	// }
-	// };
-	// }
-	// });
-	// } catch (Throwable ex) {
-	// throw new RuntimeException("Could not setup url stream handler. Please report to mod author.", ex);
-	// }
-	// }
 }
