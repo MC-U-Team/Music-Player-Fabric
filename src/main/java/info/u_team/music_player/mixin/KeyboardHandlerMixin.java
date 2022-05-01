@@ -14,14 +14,14 @@ import net.minecraft.client.gui.screens.Screen;
 abstract class KeyboardHandlerMixin {
 	
 	@Inject(method = "method_1454(ILnet/minecraft/client/gui/screen/Screen;[ZIII)V", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/client/gui/screens/Screen;keyPressed(III)Z", shift = Shift.AFTER))
-	private void keyPressAfterGuiHandling(int code, Screen screen, boolean[] resultHack, int key, int scancode, int modifiers, CallbackInfo info) {
+	private void keyPressAfterGuiHandling(int code, Screen screen, boolean[] resultHack, int keyCode, int scanCode, int modifiers, CallbackInfo info) {
 		if (!resultHack[0]) {
-			resultHack[0] = MusicPlayerEventHandler.onKeyboardPressed(key, scancode);
+			resultHack[0] = MusicPlayerEventHandler.onKeyboardPressed(keyCode, scanCode);
 		}
 	}
 	
 	@Inject(method = "keyPress(JIIII)V", at = @At(value = "TAIL"))
-	private void keyInputAfterAllHandling(long window, int key, int scancode, int code, int modifiers, CallbackInfo info) {
+	private void keyInputAfterAllHandling(long window, int keyCode, int scanCode, int code, int modifiers, CallbackInfo info) {
 		MusicPlayerEventHandler.onKeyInput();
 	}
 }
