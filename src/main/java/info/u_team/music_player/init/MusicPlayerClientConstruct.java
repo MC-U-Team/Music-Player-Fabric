@@ -18,8 +18,7 @@ public class MusicPlayerClientConstruct {
 		MusicPlayerManager.setup();
 		MusicPlayerKeys.register();
 		
-		//
-		// BusRegister.registerForge(MusicPlayerEventHandler::registerForge);
+		MusicPlayerEventHandler.register();
 	}
 	
 }
