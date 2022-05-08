@@ -203,7 +203,7 @@ curseforge {
 			requiredDependency "fabric-api"
 		}
 		
-		mainArtifact(tasks.getByName("signJar")) {
+		mainArtifact(tasks.getByName("remapJar")) {
 			displayName = "${config.curse.display}-${config.minecraft.version}-${project.version}"
 			changelogType = "html"
 			changelog = "<a href=\"${gradlefiles.changelogUrl()}\">Changelog of ${project.version}</a>"
