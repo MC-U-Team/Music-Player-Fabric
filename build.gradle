@@ -194,9 +194,14 @@ curseforge {
 		id = config.curse.id
 		releaseType = config.curse.type
 		
-		addGameVersion config.forge.mcversion
+		addGameVersion config.minecraft.version
 		addGameVersion "Fabric"
 		addGameVersion "Java 17"
+		
+		relations {
+			requiredDependency "u-team-core"
+			requiredDependency "fabric-api"
+		}
 		
 		mainArtifact(tasks.getByName("jar")) {
 			displayName = "${config.curse.display}-${config.minecraft.version}-${project.version}"
