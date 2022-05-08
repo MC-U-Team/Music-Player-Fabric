@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -39,7 +40,7 @@ public class DependencyManager {
 		
 		final Path tmpPath = createExtractDirectory();
 		
-		LOGGER.info(MARKER_LOAD, "Extraction directory for jar files is {} ", tmpPath);
+		LOGGER.info(MARKER_LOAD, "Extraction directory for jar files is {} ", tmpPath.toAbsolutePath());
 		
 		final String devPath = System.getProperty("musicplayer.dev");
 		final Set<Path> paths;
@@ -56,7 +57,17 @@ public class DependencyManager {
 	
 	private static Path createExtractDirectory() {
 		try {
-			return Files.createTempDirectory(MusicPlayerMod.MODID);
+			final Path baseDirectory = Paths.get(System.getProperty("java.io.tmpdir", "/tmp"), MusicPlayerMod.MODID + "-extraction-tmp");
+			final Path specificDirectory = baseDirectory.resolve(String.valueOf(System.currentTimeMillis()));
+			
+			// Try to clean base directory before
+			try {
+				FileUtils.deleteDirectory(baseDirectory.toFile());
+			} catch (Exception ex) {
+			}
+			
+			Files.createDirectories(specificDirectory);
+			return specificDirectory;
 		} catch (final IOException ex) {
 			throw new RuntimeException("Cannot create extract directory for musicplayer files", ex);
 		}
@@ -67,7 +78,7 @@ public class DependencyManager {
 		try (final InputStream inputStream = Files.newInputStream(path); //
 				final OutputStream outputStream = Files.newOutputStream(extractPath, StandardOpenOption.CREATE);) {
 			inputStream.transferTo(outputStream);
-			LOGGER.info(MARKER_LOAD, "Copied file from ({}) to ({})", path, extractPath);
+			LOGGER.debug(MARKER_LOAD, "Copied file from ({}) to ({})", path, extractPath);
 		} catch (final IOException ex) {
 			throw new RuntimeException("Cannot extract file " + path + " to " + extractPath, ex);
 		}
@@ -106,6 +117,6 @@ public class DependencyManager {
 	
 	private static void addToMusicPlayerDependencies(URL url) {
 		MUSICPLAYER_CLASSLOADER.addURL(url);
-		LOGGER.info(MARKER_ADD, "Added new jar file ({}) to the musicplayer dependency classloader.", url);
+		LOGGER.debug(MARKER_ADD, "Added new jar file ({}) to the musicplayer dependency classloader.", url);
 	}
 }
