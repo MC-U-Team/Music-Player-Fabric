@@ -203,7 +203,7 @@ curseforge {
 			requiredDependency "fabric-api"
 		}
 		
-		mainArtifact(tasks.getByName("jar")) {
+		mainArtifact(tasks.getByName("signJar")) {
 			displayName = "${config.curse.display}-${config.minecraft.version}-${project.version}"
 			changelogType = "html"
 			changelog = "<a href=\"${gradlefiles.changelogUrl()}\">Changelog of ${project.version}</a>"
