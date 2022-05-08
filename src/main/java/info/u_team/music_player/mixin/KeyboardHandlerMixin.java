@@ -13,7 +13,7 @@ import net.minecraft.client.gui.screens.Screen;
 @Mixin(KeyboardHandler.class)
 abstract class KeyboardHandlerMixin {
 	
-	@Inject(method = "method_1454(ILnet/minecraft/client/gui/screen/Screen;[ZIII)V", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/client/gui/screens/Screen;keyPressed(III)Z", shift = Shift.AFTER))
+	@Inject(method = "method_1454(ILnet/minecraft/client/gui/screens/Screen;[ZIII)V", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/client/gui/screens/Screen;keyPressed(III)Z", shift = Shift.AFTER))
 	private void keyPressAfterGuiHandling(int code, Screen screen, boolean[] resultHack, int keyCode, int scanCode, int modifiers, CallbackInfo info) {
 		if (!resultHack[0]) {
 			resultHack[0] = MusicPlayerEventHandler.onKeyboardPressed(keyCode, scanCode);
