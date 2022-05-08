@@ -34,6 +34,8 @@ public class DependencyManager {
 	public static void load() {
 		LOGGER.info(MARKER_LOAD, "Load dependencies");
 		
+		URL.setURLStreamHandlerFactory(new JarLookupURLStreamHandlerProvider());
+		
 		final String devPath = System.getProperty("musicplayer.dev");
 		if (devPath != null) {
 			findJarFilesInDev(Paths.get(devPath, "musicplayer-lavaplayer/build/libs"), path -> addToMusicPlayerDependencies(pathToUrl().apply(path)));
