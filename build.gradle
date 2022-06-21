@@ -95,16 +95,14 @@ tasks.named("shadowJar") {
 	exclude "META-INF/maven/**"
 }
 
-tasks.matching { task ->
-	task.name == "prepareRuns"
-}.configureEach { task ->
-	task.dependsOn(":musicplayer-lavaplayer:assemble")
+afterEvaluate {
+	net.fabricmc.loom.task.LoomTasks.getIDELaunchConfigureTaskName(project).get().configure {
+		dependsOn ":musicplayer-lavaplayer:assemble"
+	}
 }
 
-tasks.matching { task ->
-	task.name == "prepareRemapJar"
-}.configureEach { task ->
-	task.dependsOn("shadowJar")
+tasks.named("prepareRemapJar") {
+	dependsOn "shadowJar"
 }
 
 tasks.withType(Jar) { task ->
