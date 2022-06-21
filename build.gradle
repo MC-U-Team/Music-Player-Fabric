@@ -133,7 +133,7 @@ dependencies {
 	modImplementation "net.fabricmc:fabric-loader:${config.fabric.loader.version}"
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${config.fabric.api.version}"
 	
-	modImplementation "info.u-team:u_team_core-fabric-1.18.2:4.0.0.3"
+	modImplementation "info.u-team:u_team_core-fabric-1.19:4.0.0.4"
 	
 	library project(":musicplayer-lavaplayer-api")
 	shade ("net.harawata:appdirs:1.0.0") {
