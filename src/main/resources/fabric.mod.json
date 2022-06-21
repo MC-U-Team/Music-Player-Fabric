@@ -24,9 +24,12 @@
 		"musicplayer.mixins.json"
 	],
 	"depends": {
-		"uteamcore": ">=4.0.0.1",
+		"uteamcore": ">=4.0.0.3",
 		"fabricloader": ">=0.13.3",
 		"minecraft": "1.18.2",
 		"java": ">=17"
+	},
+	"custom": {
+		"uteamcore:update_url": "https://api.u-team.info/update/musicplayer_fabric.json"
 	}
 }
