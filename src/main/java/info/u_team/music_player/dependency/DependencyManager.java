@@ -20,10 +20,13 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
+import com.google.common.base.Predicates;
+
 import info.u_team.music_player.MusicPlayerMod;
 import info.u_team.music_player.dependency.classloader.DependencyClassLoader;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
+import net.minecraft.util.StringUtil;
 
 public class DependencyManager {
 	
@@ -45,12 +48,20 @@ public class DependencyManager {
 		final String devPath = System.getProperty("musicplayer.dev");
 		final Set<Path> paths;
 		if (devPath != null) {
-			paths = findJarFilesInDev(Paths.get(devPath));
+			paths = Stream.of(devPath.split(";")) //
+					.filter(Predicates.not(StringUtil::isNullOrEmpty)) //
+					.map(Paths::get) //
+					.map(DependencyManager::findJarFilesInDev) //
+					.flatMap(Set::stream) //
+					.collect(Collectors.toUnmodifiableSet());
 		} else {
 			paths = findJarFilesInJar("dependencies");
 		}
 		
-		paths.stream().map(path -> extractFile(tmpPath, path)).map(DependencyManager::pathToUrl).forEach(DependencyManager::addToMusicPlayerDependencies);
+		paths.stream() //
+				.map(path -> extractFile(tmpPath, path)) //
+				.map(DependencyManager::pathToUrl) //
+				.forEach(DependencyManager::addToMusicPlayerDependencies);
 		
 		LOGGER.info(MARKER_LOAD, "Finished loading dependencies");
 	}
@@ -95,7 +106,7 @@ public class DependencyManager {
 	
 	private static Set<Path> findJarFilesInDev(Path path) {
 		try (final Stream<Path> stream = Files.walk(path)) {
-			return stream.filter(file -> file.toString().endsWith(FILE_ENDING)).collect(Collectors.toSet());
+			return filterPackedFiles(stream);
 		} catch (final IOException ex) {
 			LOGGER.error(MARKER_LOAD, "When searching for jar files in dev an exception occured.", ex);
 		}
@@ -106,14 +117,16 @@ public class DependencyManager {
 		final ModContainer container = FabricLoader.getInstance().getModContainer(MusicPlayerMod.MODID).orElseThrow(IllegalStateException::new);
 		
 		try (final Stream<Path> stream = Files.walk(container.findPath(folder).orElseThrow(IllegalStateException::new))) {
-			return stream.filter(file -> file.toString().endsWith(FILE_ENDING)).collect(Collectors.toSet());
+			return filterPackedFiles(stream);
 		} catch (final IOException | IllegalStateException ex) {
 			LOGGER.error(MARKER_LOAD, "When searching for jar files in jar an exception occured.", ex);
 		}
 		return Collections.emptySet();
 	}
 	
-	// Add to different classloader
+	private static Set<Path> filterPackedFiles(Stream<Path> stream) {
+		return stream.filter(file -> file.toString().endsWith(FILE_ENDING)).collect(Collectors.toSet());
+	}
 	
 	private static void addToMusicPlayerDependencies(URL url) {
 		MUSICPLAYER_CLASSLOADER.addURL(url);
