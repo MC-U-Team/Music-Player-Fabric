@@ -3,7 +3,7 @@
 	"id": "musicplayer",
 	"version": "${version}",
 	"name": "Music Player",
-	"description": "Join our discord server here: https://discord.u-team.info\n\nPlay every youtube video, livestream and more with this player! We use lava player to ensure this diversity.\n\nLearn more about lavaplayer here: https://github.com/sedmelluq/lavaplayer\n\nSources:\n  - YouTube\n  - SoundCloud\n  - Bandcamp\n  - Vimeo\n  - Twitch streams\n  - Local files\n  - HTTP URLs\n\nFile formats:\n  - MP3\n  - FLAC\n  - WAV\n  - Matroska/WebM (AAC, Opus or Vorbis codecs)\n  - MP4/M4A (AAC codec)\n  - OGG streams (Opus, Vorbis and FLAC codecs)\n  - AAC streams\n  - Stream playlists (M3U and PLS)",
+	"description": "Join our discord server here: https://discord.hycrafthd.net\n\nPlay every youtube video, livestream and more with this player! We use lava player to ensure this diversity.\n\nLearn more about lavaplayer here: https://github.com/sedmelluq/lavaplayer\n\nSources:\n  - YouTube\n  - SoundCloud\n  - Bandcamp\n  - Vimeo\n  - Twitch streams\n  - Local files\n  - HTTP URLs\n\nFile formats:\n  - MP3\n  - FLAC\n  - WAV\n  - Matroska/WebM (AAC, Opus or Vorbis codecs)\n  - MP4/M4A (AAC codec)\n  - OGG streams (Opus, Vorbis and FLAC codecs)\n  - AAC streams\n  - Stream playlists (M3U and PLS)",
 	"authors": [
 		"HyCraftHD"
 	],
@@ -24,10 +24,10 @@
 		"musicplayer.mixins.json"
 	],
 	"depends": {
-		"uteamcore": ">=4.0.0.4",
-		"fabricloader": ">=0.13.3",
-		"fabric": ">=0.56.1+1.19",
-		"minecraft": "1.19",
+		"uteamcore": ">=4.1.0.5",
+		"fabricloader": ">=0.14.8",
+		"fabric": ">=0.58.5+1.19.1",
+		"minecraft": "1.19.1",
 		"java": ">=17"
 	},
 	"custom": {
