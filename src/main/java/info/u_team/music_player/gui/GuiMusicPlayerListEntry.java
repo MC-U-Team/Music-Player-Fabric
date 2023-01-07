@@ -75,10 +75,10 @@ class GuiMusicPlayerListEntry extends BetterScrollableListEntry<GuiMusicPlayerLi
 				
 				playlists.removePlayingLock();
 				
-				if (minecraft.screen instanceof GuiMusicPlayer musicplayergui) {
+				if (minecraft.screen instanceof final GuiMusicPlayer musicplayergui) {
 					final GuiMusicPlayerList newGui = musicplayergui.getPlaylistsList();
 					newGui.children().forEach(entry -> entry.playPlaylistButton.active = true);
-				} else if (minecraft.screen instanceof GuiMusicPlaylist musicplaylistgui) {
+				} else if (minecraft.screen instanceof final GuiMusicPlaylist musicplaylistgui) {
 					musicplaylistgui.getTrackList().updateAllEntries();
 				}
 			};
@@ -109,16 +109,16 @@ class GuiMusicPlayerListEntry extends BetterScrollableListEntry<GuiMusicPlayerLi
 		minecraft.font.draw(matrixStack, name, entryX + 5, entryY + 5, playlist.equals(playlists.getPlaying()) ? 0x0083FF : 0xFFF00F);
 		minecraft.font.draw(matrixStack, playlist.getEntrySize() + " " + getTranslation(playlist.getEntrySize() > 1 ? GUI_PLAYLISTS_ENTRIES : GUI_PLAYLISTS_ENTRY), entryX + 5, entryY + 30, 0xFFFFFF);
 		
-		playPlaylistButton.x = entryWidth - 65;
-		playPlaylistButton.y = entryY + 12;
+		playPlaylistButton.setX(entryWidth - 65);
+		playPlaylistButton.setY(entryY + 12);
 		playPlaylistButton.render(matrixStack, mouseX, mouseY, partialTicks);
 		
-		openPlaylistButton.x = entryWidth - 40;
-		openPlaylistButton.y = entryY + 12;
+		openPlaylistButton.setX(entryWidth - 40);
+		openPlaylistButton.setY(entryY + 12);
 		openPlaylistButton.render(matrixStack, mouseX, mouseY, partialTicks);
 		
-		deletePlaylistButton.x = entryWidth - 15;
-		deletePlaylistButton.y = entryY + 12;
+		deletePlaylistButton.setX(entryWidth - 15);
+		deletePlaylistButton.setY(entryY + 12);
 		deletePlaylistButton.render(matrixStack, mouseX, mouseY, partialTicks);
 	}
 	

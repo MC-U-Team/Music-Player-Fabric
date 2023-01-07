@@ -21,7 +21,7 @@ abstract class GuiMusicPlaylistListEntryFunctions extends GuiMusicPlaylistListEn
 	GuiMusicPlaylistListEntryFunctions(GuiMusicPlaylistList guilist, Playlists playlists, Playlist playlist, LoadedTracks loadedTrack, IAudioTrack track) {
 		super(playlists, playlist, loadedTrack, track);
 		this.playlist = playlist;
-		this.uri = loadedTrack.getUri();
+		uri = loadedTrack.getUri();
 		deleteTrackButton = addChildren(new ImageButton(0, 0, 20, 20, MusicPlayerResources.TEXTURE_CLEAR));
 		upButton = addChildren(new ImageButton(0, 0, 20, 10, MusicPlayerResources.TEXTURE_UP));
 		downButton = addChildren(new ImageButton(0, 0, 20, 10, MusicPlayerResources.TEXTURE_DOWN));
@@ -48,16 +48,16 @@ abstract class GuiMusicPlaylistListEntryFunctions extends GuiMusicPlaylistListEn
 		super.render(matrixStack, slotIndex, entryY, entryX, entryWidth, entryHeight, mouseX, mouseY, hovered, partialTicks);
 		drawEntryExtended(matrixStack, entryX, entryY, entryWidth, entryHeight, mouseX, mouseY, hovered, partialTicks);
 		
-		deleteTrackButton.x = entryWidth - 15;
-		deleteTrackButton.y = entryY + 8;
+		deleteTrackButton.setX(entryWidth - 15);
+		deleteTrackButton.setY(entryY + 8);
 		deleteTrackButton.render(matrixStack, mouseX, mouseY, partialTicks);
 		
-		upButton.x = entryWidth - 40;
-		upButton.y = entryY + 8;
+		upButton.setX(entryWidth - 40);
+		upButton.setY(entryY + 8);
 		upButton.render(matrixStack, mouseX, mouseY, partialTicks);
 		
-		downButton.x = entryWidth - 40;
-		downButton.y = entryY + 18;
+		downButton.setX(entryWidth - 40);
+		downButton.setY(entryY + 18);
 		downButton.render(matrixStack, mouseX, mouseY, partialTicks);
 	}
 	
