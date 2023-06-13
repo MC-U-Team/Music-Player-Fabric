@@ -41,7 +41,7 @@ task copyNewDep(type: Copy) {
 tasks.jar.dependsOn copyNewDep
 
 jar {
-	archiveName += ".packed"
+	archiveExtension.set(archiveExtension.get() + ".packed")
 	
 	exclude("LICENSE-DEPENDENCIES")
 }
