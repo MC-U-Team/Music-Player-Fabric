@@ -1,12 +1,5 @@
 version: 2
-updates:
-- package-ecosystem: gradle
-  directory: "/"
-  schedule:
-    interval: daily
-    time: "04:00"
-  open-pull-requests-limit: 10
-  
+updates:  
 - package-ecosystem: gradle
   directory: "/"
   target-branch: "1.18.2"
