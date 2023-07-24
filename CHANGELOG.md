@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.18.2-2.3.4.21] - 2023-07-25
+### Changed
+ - Fix crash on startup when twitch.tv and other provider sites cannot be reached
+
 ## [1.18.2-2.3.4.19] - 2023-06-13
 ### Changed
  - Update lavaplayer to 1.4.2
